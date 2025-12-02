@@ -55,13 +55,14 @@ services:
           - local
 
     websocket:
+      build:
+        context: ./docker/websocket
       env_file:
         - .env
       working_dir: /var/www/app/
-      image: mobidevpublisher/php:8.3
       restart: on-failure
       environment:
-        PHP_ENABLED_EXTENSIONS: "amqp apcu sodium redis zip pdo_pgsql gd gmp pcntl"
+        PHP_ENABLED_EXTENSIONS: "amqp apcu sodium redis zip pdo_pgsql gd gmp"
         PHP_ALLOW_URL_FOPEN: "On"
         PHP_MAX_EXECUTION_TIME: 60
         PHP_MAX_INPUT_TIME: 60
@@ -86,7 +87,7 @@ services:
       image: mobidevpublisher/php:8.3
       restart: on-failure
       environment:
-        PHP_ENABLED_EXTENSIONS: "amqp apcu sodium redis zip pdo_pgsql gd gmp pcntl"
+        PHP_ENABLED_EXTENSIONS: "amqp apcu sodium redis zip pdo_pgsql gd gmp"
         PHP_ALLOW_URL_FOPEN: "On"
         PHP_MAX_EXECUTION_TIME: 60
         PHP_MAX_INPUT_TIME: 60
@@ -99,6 +100,8 @@ services:
       command: php artisan queue:work --sleep=3 --tries=3 --timeout=60
       volumes:
         - ".:/var/www/app/"
+      networks:
+        - local
 
     scheduler:
       env_file:
@@ -107,7 +110,7 @@ services:
       image: mobidevpublisher/php:8.3
       restart: on-failure
       environment:
-        PHP_ENABLED_EXTENSIONS: "amqp apcu sodium redis zip pdo_pgsql gd gmp pcntl"
+        PHP_ENABLED_EXTENSIONS: "amqp apcu sodium redis zip pdo_pgsql gd gmp"
         PHP_ALLOW_URL_FOPEN: "On"
         PHP_MAX_EXECUTION_TIME: 60
         PHP_MAX_INPUT_TIME: 60
@@ -120,6 +123,8 @@ services:
       command: php artisan schedule:work
       volumes:
         - ".:/var/www/app/"
+      networks:
+        - local
       depends_on:
         - php
         - postgres
